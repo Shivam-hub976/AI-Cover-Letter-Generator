@@ -1,7 +1,8 @@
-// Grab the DOM Elements
+//Grab the DOM Elements
 const form = document.getElementById('coverLetterForm');
 const resultContainer = document.getElementById('resultContainer');
 const letterOutput = document.getElementById('letterOutput');
+const copyBtn = document.getElementById('copyBtn');
 
 // Controller function: Data Simulation via Template Literal
 function generateTemplate(data) {
@@ -38,4 +39,30 @@ form.addEventListener('submit', function(event) {
     
     // Unhide the result container
     resultContainer.classList.remove('hidden');
+
+    // UX FIX: Give the browser 100 milliseconds to draw the box, THEN smooth scroll to it
+    setTimeout(() => {
+        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 100);
+});
+
+// UX Polish: Copy to Clipboard Utility
+copyBtn.addEventListener('click', function() {
+    // Grab the generated text from the DOM
+    const textToCopy = letterOutput.textContent;
+    
+    // Utilize the modern Clipboard API
+    navigator.clipboard.writeText(textToCopy).then(() => {
+        // Visual feedback for the user
+        const originalText = copyBtn.textContent;
+        copyBtn.textContent = "Copied to Clipboard!";
+        
+        // Revert button text after 2 seconds
+        setTimeout(() => {
+            copyBtn.textContent = originalText;
+        }, 2000);
+    }).catch(err => {
+        console.error('Failed to copy text: ', err);
+        alert("Failed to copy to clipboard. Please select the text and copy manually.");
+    });
 });
