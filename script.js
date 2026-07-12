@@ -4,24 +4,18 @@ const resultContainer = document.getElementById('resultContainer');
 const letterOutput = document.getElementById('letterOutput');
 const copyBtn = document.getElementById('copyBtn');
 
-// Controller function: Data Simulation via Template Literal
-function generateTemplate(data) {
-    return `Dear Hiring Manager at ${data.company},
-
-My name is ${data.name} and I am writing to express my strong interest in the ${data.role} position at your company. 
-
-I have a proven track record of delivering high-quality results and possess strong expertise in ${data.skills}. I admire the work ${data.company} is doing in the industry and I am eager to bring my technical background and collaborative spirit to your team.
-
-Thank you for considering my application. I look forward to the possibility of discussing this exciting opportunity with you.
-
-Sincerely,
-${data.name}`;
-}
-
-// State Logic: Capture form payload onSubmit
-form.addEventListener('submit', function(event) {
+// State Logic & API Call
+form.addEventListener('submit', async function(event) {
     // Prevent the page from refreshing
     event.preventDefault();
+
+    // UI State management: Show "Generating..."
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalBtnText = submitBtn.textContent;
+    submitBtn.textContent = "Generating...";
+    submitBtn.disabled = true;
+    submitBtn.style.opacity = 0.7;
+    resultContainer.classList.add('hidden'); // Hide previous results if re-generating
 
     // Capture the inputs
     const formData = {
@@ -31,19 +25,42 @@ form.addEventListener('submit', function(event) {
         skills: document.getElementById('skills').value
     };
 
-    // Interpolate the state variables into the template
-    const simulatedLetter = generateTemplate(formData);
-    
-    // Render the generated string to the UI
-    letterOutput.textContent = simulatedLetter;
-    
-    // Unhide the result container
-    resultContainer.classList.remove('hidden');
+    try {
+        // API Integration : Sending data to secure node.js backend
+        const response = await fetch('http://localhost:3000/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(formData)
+        });
 
-    // UX FIX: Give the browser 100 milliseconds to draw the box, THEN smooth scroll to it
-    setTimeout(() => {
-        resultContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }, 100);
+        const data = await response.json();
+
+        if (data.letter) {
+            //Render the Real ai generated string to the UI
+            letterOutput.textContent = data.letter;
+
+            //Unhide the result container
+            resultContainer.classList.remove('hidden');
+
+            //Smooth scroll down to the result container
+            setTimeout(() => {
+                resultContainer.scrollIntoView({behavior: 'smooth', block: 'start'});
+            }, 100);
+            
+        } else {
+            alert("Failed to generate the cover letter. Please try again.");
+        }
+
+    } catch (error) {
+        console.error('Error generating cover letter:', error);
+        alert("An error occurred while generating the cover letter. Please try again.");
+    } finally {
+        // Reset the button back normal
+        submitBtn.textContent = originalBtnText;
+        submitBtn.disabled = false;
+        submitBtn.style.opacity = 1;
+    }
+
 });
 
 // UX Polish: Copy to Clipboard Utility

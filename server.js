@@ -19,16 +19,24 @@ app.post('/generate', async(req, res) => {
 
         //Programmatic prompt engineering
         const prompt = `You are an expert career coach. Write a professional, concise, and compelling cover letter for the following candidate:
-        
         - Candidate Name: ${name}
         - Target Role: ${role}
         - Target Company: ${company}
         - Key Skills: ${skills}
-
-        The tone should be confident but humble. Do not hallucinate experiences outside of the provided skills. Do not include placehoders like "[Your Address]". Just return the letter content ready to copy.`;
+        
+        STRICT FORMATTING RULES:
+        1. Start the letter immediately with the greeting (e.g., "Dear ${company} Hiring Team,").
+        2. ABSOLUTELY NO HEADERS. Do not include placeholders for Date, Email, Phone Number, or Address.
+        3. DO NOT use brackets like [ ] anywhere in the response.
+        4. Do not hallucinate experiences outside of the provided skills.
+        5. End exactly with: 
+        Sincerely,
+        ${name}
+        
+        Return ONLY the text of the letter, ready to copy.`;
 
         //Send the engineered prompt to Gemini
-        const model = genAI.getGenerativeModel({model: 'gemini-1.5-flash'});
+        const model = genAI.getGenerativeModel({model: 'gemini-2.5-flash'});
         const result = await model.generateContent(prompt);
         const response = await result.response;
         const generatedText = response.text();
