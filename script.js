@@ -42,13 +42,12 @@ form.addEventListener('submit', async function(event) {
     // Use FormData to package the text fields AND the PDF file together automatically
     const payload = new FormData(form);
 
-    // DEPLOYMENT LOGIC: Determine if running locally or live on Netlify
+    // Determine if running locally or live on Netlify
     const isLocalhost = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
     
-    // IMPORTANT: Once you deploy to Render.com, paste your actual Render URL right here ↓
     const API_URL = isLocalhost 
         ? 'http://localhost:3000/generate' 
-        : 'https://your-backend-name.onrender.com/generate';
+        : 'https://ai-cover-letter-generator-4nnu.onrender.com/generate';
 
     try {
         // API Integration: Sending data to secure Node.js backend
