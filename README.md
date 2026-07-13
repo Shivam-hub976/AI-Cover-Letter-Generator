@@ -2,7 +2,7 @@
 
 A full-stack, AI-powered Software-as-a-Service (SaaS) application that dynamically generates highly contextualized, professional cover letters. This project ingests user parameters (Name, Role, Company, Skills) alongside an optional PDF resume upload, utilizing Google Gemini 2.5 Flash's multimodal capabilities to engineer tailored outputs.
 
-**Live Demo:** https://ai-cover-letter-pro.netlify.app\_
+**Live Demo:** https://ai-cover-letter-pro.netlify.app/
 
 ---
 
@@ -50,6 +50,7 @@ If we had forced the implementation of `pdf-parse`, the backend would be brittle
 - **Backend:** Node.js, Express.js
 - **Middleware:** Multer (Memory Storage, MIME-type validation)
 - **AI Provider:** Google Generative AI SDK (`gemini-2.5-flash`)
-- **Security:** `dotenv`, CORS, Custom Input Sanitization
+- **Deployment & Cloud:** Netlify (Frontend CDN), Render (Backend Web Service)
+- **Security:** `dotenv`, CORS, Custom Input Sanitization (XSS Prevention)
 
 ---
