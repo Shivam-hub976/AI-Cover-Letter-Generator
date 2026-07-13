@@ -1,3 +1,18 @@
+/* CSS Variables for Pixel-Perfect Consistency & Theming */
+:root {
+    --primary-color: #2563eb; 
+    --primary-hover: #1d4ed8;
+    --success-color: #10b981;
+    --success-hover: #059669;
+    --bg-color: #f1f5f9;
+    --surface-color: #ffffff;
+    --text-main: #0f172a;
+    --text-muted: #64748b;
+    --border-color: #cbd5e1;
+    --focus-ring: rgba(37, 99, 235, 0.25);
+    --error-color: #ef4444;
+}
+
 /* Reset and Base Styles */
 * {
     box-sizing: border-box;
@@ -6,120 +21,214 @@
 }
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f4f7f6;
-    color: #333;
+    /* Modern system font stack (Zero render-blocking load time) */
+    font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background-color: var(--bg-color);
+    color: var(--text-main);
     line-height: 1.6;
-    padding: 40px 20px;
+    padding: 2rem 1rem;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
 }
 
 /* Layout */
 .container {
+    width: 100%;
     max-width: 650px;
-    margin: 0 auto;
-    background-color: #ffffff;
-    padding: 30px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: var(--surface-color);
+    padding: 2.5rem;
+    border-radius: 12px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.05);
+    height: fit-content;
 }
 
-header {
+header.text-center {
     text-align: center;
-    margin-bottom: 25px;
+    margin-bottom: 2rem;
 }
 
 header h1 {
-    color: #2c3e50;
-    margin-bottom: 5px;
+    color: var(--text-main);
+    font-size: 1.8rem;
+    margin-bottom: 0.5rem;
+    line-height: 1.2;
 }
 
 header p {
-    color: #666;
-    font-size: 0.95rem;
+    color: var(--text-muted);
+    font-size: 1rem;
 }
 
 /* Form Styles */
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 1.5rem;
 }
 
 label {
     display: block;
-    margin-bottom: 8px;
+    margin-bottom: 0.5rem;
     font-weight: 600;
-    color: #444;
+    font-size: 0.95rem;
+    color: var(--text-main);
 }
 
-input, textarea {
+/* Helper Classes mapped from HTML */
+.required-asterisk {
+    color: var(--error-color);
+    margin-left: 2px;
+}
+
+.optional-text {
+    color: var(--text-muted);
+    font-size: 0.85em;
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+input[type="text"], 
+textarea, 
+input[type="file"] {
     width: 100%;
-    padding: 12px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
     font-size: 1rem;
-    transition: border-color 0.3s ease;
+    font-family: inherit;
+    background-color: var(--surface-color);
+    transition: all 0.2s ease-in-out;
 }
 
+/* Custom File Upload Button Styling */
+input[type="file"] {
+    padding: 0.5rem;
+    color: var(--text-muted);
+}
+
+input[type="file"]::file-selector-button {
+    background-color: var(--bg-color);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 0.4rem 0.8rem;
+    margin-right: 1rem;
+    cursor: pointer;
+    color: var(--text-main);
+    font-weight: 600;
+    transition: background-color 0.2s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background-color: #e2e8f0;
+}
+
+/* Accessibility: Active Focus States */
 input:focus, textarea:focus {
     outline: none;
-    border-color: #3498db;
-    box-shadow: 0 0 5px rgba(52, 152, 219, 0.3);
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 4px var(--focus-ring);
 }
 
 /* Buttons */
 button {
     width: 100%;
-    padding: 12px;
-    font-size: 1.1rem;
+    padding: 0.875rem;
+    font-size: 1.05rem;
     font-weight: 600;
     border: none;
-    border-radius: 5px;
+    border-radius: 8px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    transition: all 0.2s ease;
+}
+
+/* Lighthouse requirement: clear keyboard focus */
+button:focus-visible {
+    outline: 2px solid var(--primary-color);
+    outline-offset: 2px;
 }
 
 .primary-btn {
-    background-color: #3498db;
+    background-color: var(--primary-color);
     color: #ffffff;
 }
 
-.primary-btn:hover {
-    background-color: #2980b9;
+/* Hover effects (disabled if the button is locked during API call) */
+.primary-btn:hover:not(:disabled) {
+    background-color: var(--primary-hover);
+    transform: translateY(-1px);
+}
+
+.primary-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.primary-btn:disabled {
+    cursor: not-allowed;
 }
 
 .success-btn {
-    background-color: #2ecc71;
+    background-color: var(--success-color);
     color: #ffffff;
-    margin-top: 15px;
+    margin-top: 1rem;
 }
 
 .success-btn:hover {
-    background-color: #27ae60;
+    background-color: var(--success-hover);
+    transform: translateY(-1px);
 }
 
 /* Output Section */
 .hidden {
-    display: none;
+    display: none !important;
 }
 
 #resultContainer {
-    margin-top: 35px;
-    padding-top: 25px;
-    border-top: 2px dashed #eee;
+    margin-top: 2.5rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--border-color);
+    animation: fadeIn 0.4s ease-out; /* Smooth entrance */
 }
 
 #resultContainer h2 {
-    font-size: 1.2rem;
-    margin-bottom: 15px;
-    color: #2c3e50;
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    color: var(--text-main);
 }
 
 .output-box {
-    background-color: #f8f9fa;
-    padding: 20px;
-    border: 1px solid #e9ecef;
-    border-radius: 5px;
-    white-space: pre-wrap;
-    font-size: 0.95rem;
-    color: #212529;
+    background-color: var(--surface-color);
+    padding: 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    font-size: 1rem;
+    color: var(--text-main);
     min-height: 150px;
+    line-height: 1.8;
+}
+
+/* Animation */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Responsiveness */
+@media (max-width: 600px) {
+    body {
+        padding: 1rem 0.5rem;
+    }
+    .container {
+        padding: 1.5rem;
+        border-radius: 10px;
+    }
+    header h1 {
+        font-size: 1.5rem;
+    }
+    button {
+        padding: 0.75rem;
+        font-size: 1rem;
+    }
+    .output-box {
+        padding: 1rem;
+        font-size: 0.95rem;
+    }
 }

@@ -8,20 +8,37 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const upload = multer({ storage: multer.memoryStorage() });
+// Limit file size to 2MB and STRICTLY enforce PDF only
+const upload = multer({ 
+    storage: multer.memoryStorage(),
+    limits: { fileSize: 2 * 1024 * 1024 }, // 2 MB Limit
+    fileFilter: (req, file, cb) => {
+        if (file.mimetype === 'application/pdf') {
+            cb(null, true);
+        } else {
+            cb(new Error('Invalid file type. Only PDFs are allowed.'));
+        }
+    }
+});
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
 
 app.post('/generate', upload.single('resume'), async (req, res) => {
     try {
         const { name, role, company, skills } = req.body;
         
-        // 1. Conditionally add the resume instruction
+        // Backend Validation (Never trust the frontend)
+        if (!name || !role || !company || !skills) {
+            return res.status(400).json({ error: "Missing required text fields. Name, Role, Company, and Skills are mandatory." });
+        }
+        
+        // Conditionally add the resume instruction
         let resumeInstruction = "";
         if (req.file) {
             resumeInstruction = "I am attaching the candidate's actual resume as a PDF file. Use it to highly contextualize the letter and highlight relevant achievements.";
         }
 
-        // 2. Build the base text prompt
+        // Build the base text prompt
         const prompt = `You are an expert career coach. Write a professional, concise, and compelling cover letter for the following candidate:
         - Candidate Name: ${name}
         - Target Role: ${role}
@@ -42,11 +59,10 @@ app.post('/generate', upload.single('resume'), async (req, res) => {
         
         Return ONLY the text of the letter, ready to copy.`;
 
-        // 3. Prepare the Multimodal Payload
+        // Prepare the Multimodal Payload
         const payload = [prompt];
 
         if (req.file) {
-            console.log("--- DEBUG: PDF RECEIVED. SENDING DIRECTLY TO GEMINI ---");
             const pdfPart = {
                 inlineData: {
                     data: req.file.buffer.toString("base64"),
@@ -54,11 +70,9 @@ app.post('/generate', upload.single('resume'), async (req, res) => {
                 }
             };
             payload.push(pdfPart);
-        } else {
-            console.log("--- DEBUG: NO PDF RECEIVED. GENERATING FROM TEXT ONLY ---");
         }
 
-        // 4. Call the Model
+        // Call the Model
         const model = genAI.getGenerativeModel({ model: 'gemini-2.5-flash' });
         const result = await model.generateContent(payload);
         const response = await result.response;
@@ -67,10 +81,17 @@ app.post('/generate', upload.single('resume'), async (req, res) => {
         res.json({ letter: generatedText });
 
     } catch (error) {
+        // Handle specific multer upload errors gracefully
+        if (error.message.includes('Invalid file type') || error.message.includes('File too large')) {
+            console.error("Upload Error:", error.message);
+            return res.status(400).json({ error: error.message });
+        }
+        
         console.error("AI Generation Error:", error);
-        res.status(500).json({ error: "Failed to generate cover letter" });
+        res.status(500).json({ error: "Failed to generate cover letter due to an internal server error." });
     }
 });
 
-const PORT = 3000;
+// Use environment port if available, otherwise default to 3000
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Secure AI Server is running and listening on port ${PORT}`));

@@ -4,13 +4,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Generate professional, highly contextualized cover letters instantly using AI and your resume.">
     <title>AI Cover Letter Generator</title>
+
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📄</text></svg>">
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <main class="container">
-        <header>
+        <header class="text-center">
             <h1>AI Cover Letter Generator</h1>
             <p>Enter your details below to generate a tailored cover letter.</p>
         </header>
@@ -18,25 +23,30 @@
         <section class="form-section">
             <form id="coverLetterForm">
                 <div class="form-group">
-                    <label for="name">Full Name <span style="color: red;">*</span></label>
-                    <input type="text" id="name" name="name" required>
+                    <label for="name">Full Name <span class="required-asterisk" aria-hidden="true">*</span></label>
+                    <input type="text" id="name" name="name" required placeholder="e.g. Shivam Kumar">
                 </div>
+
                 <div class="form-group">
-                    <label for="role">Target Role <span style="color: red;">*</span></label>
-                    <input type="text" id="role" name="role" required>
+                    <label for="role">Target Role <span class="required-asterisk" aria-hidden="true">*</span></label>
+                    <input type="text" id="role" name="role" required placeholder="e.g. Software Engineer">
                 </div>
+
                 <div class="form-group">
-                    <label for="company">Target Company <span style="color: red;">*</span></label>
-                    <input type="text" id="company" name="company" required>
+                    <label for="company">Target Company <span class="required-asterisk"
+                            aria-hidden="true">*</span></label>
+                    <input type="text" id="company" name="company" required placeholder="e.g. Google">
                 </div>
+
                 <div class="form-group">
-                    <label for="skills">Key Skills <span style="color: red;">*</span></label>
-                    <textarea id="skills" name="skills" rows="3" required></textarea>
+                    <label for="skills">Key Skills <span class="required-asterisk" aria-hidden="true">*</span></label>
+                    <textarea id="skills" name="skills" rows="3" required
+                        placeholder="e.g. Python, React, Node.js, MySQL"></textarea>
                 </div>
+
                 <div class="form-group">
-                    <label for="resume">Upload Resume (PDF) <span
-                            style="color: gray; font-size: 0.9em;">(Optional)</span></label>
-                    <!-- Notice we removed the 'required' keyword at the end of this next line -->
+                    <label for="resume">Upload Resume (PDF) <span class="optional-text">(Optional, Max
+                            2MB)</span></label>
                     <input type="file" id="resume" name="resume" accept="application/pdf">
                 </div>
 
@@ -44,7 +54,8 @@
             </form>
         </section>
 
-        <section id="resultContainer" class="hidden">
+        <!-- aria-live ensures screen readers announce the newly generated content -->
+        <section id="resultContainer" class="hidden" aria-live="polite">
             <h2>Your Generated Cover Letter</h2>
             <div id="letterOutput" class="output-box"></div>
             <button id="copyBtn" class="success-btn">Copy to Clipboard</button>
