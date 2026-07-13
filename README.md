@@ -2,7 +2,7 @@
 
 A full-stack, AI-powered Software-as-a-Service (SaaS) application that dynamically generates highly contextualized, professional cover letters. This project ingests user parameters (Name, Role, Company, Skills) alongside an optional PDF resume upload, utilizing Google Gemini 2.5 Flash's multimodal capabilities to engineer tailored outputs.
 
-**Live Demo:** [Insert Live Link Here] _(e.g., https://your-project.vercel.app)_
+**Live Demo:** https://ai-cover-letter-pro.netlify.app\_
 
 ---
 
