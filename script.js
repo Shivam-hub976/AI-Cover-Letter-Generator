@@ -17,32 +17,33 @@ form.addEventListener('submit', async function(event) {
     submitBtn.style.opacity = 0.7;
     resultContainer.classList.add('hidden'); // Hide previous results if re-generating
 
-    // Capture the inputs
-    const formData = {
-        name: document.getElementById('name').value,
-        role: document.getElementById('role').value,
-        company: document.getElementById('company').value,
-        skills: document.getElementById('skills').value
-    };
+    // Use FormData to package the text fields AND the PDF file together automatically
+    const payload = new FormData(form);
 
     try {
         // API Integration : Sending data to secure node.js backend
         const response = await fetch('http://localhost:3000/generate', {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(formData)
+            body: payload 
         });
 
         const data = await response.json();
 
         if (data.letter) {
-            //Render the Real ai generated string to the UI
-            letterOutput.textContent = data.letter;
+            // Format the markdown text into HTML paragraphs
+            const formattedHTML = data.letter
+                .split('\n\n')
+                .filter(paragraph => paragraph.trim() !== '') 
+                .map(paragraph => `<p style="margin-bottom: 15px;">${paragraph.replace(/\n/g, '<br>')}</p>`)
+                .join('');
 
-            //Unhide the result container
+            // Render to the UI using innerHTML so the <p> tags actually act as HTML
+            letterOutput.innerHTML = formattedHTML;
+
+            // Unhide the result container
             resultContainer.classList.remove('hidden');
 
-            //Smooth scroll down to the result container
+            // Smooth scroll down to the result container
             setTimeout(() => {
                 resultContainer.scrollIntoView({behavior: 'smooth', block: 'start'});
             }, 100);
@@ -60,13 +61,12 @@ form.addEventListener('submit', async function(event) {
         submitBtn.disabled = false;
         submitBtn.style.opacity = 1;
     }
-
 });
 
-// UX Polish: Copy to Clipboard Utility
-copyBtn.addEventListener('click', function() {
-    // Grab the generated text from the DOM
-    const textToCopy = letterOutput.textContent;
+// Copy to Clipboard Utility
+copyBtn.addEventListener('click', function() { 
+    // innerText respects the visual paragraph breaks created by our new HTML <p> tags.
+    const textToCopy = letterOutput.innerText;
     
     // Utilize the modern Clipboard API
     navigator.clipboard.writeText(textToCopy).then(() => {
